@@ -38,11 +38,11 @@
       title: `Talk ${location.hash.match(/#(.*?)([?]|$)/)[1]}`,
       distractionFreeMode: true  // Facebook-like distraction free mode
     })
-    // window.onhashchange = function (event) {
-    //     if (event.newURL.split('?')[0] !== event.oldURL.split('?')[0]) {
-    //         location.reload()
-    //     }
-    // }
+    window.onhashchange = function (event) {
+        if (event.newURL.split('?')[0] !== event.oldURL.split('?')[0]) {
+            location.reload()
+        }
+    }
   </script>
 </body>
  
