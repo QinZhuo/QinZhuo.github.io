@@ -1,5 +1,3 @@
-# 游戏开发
-## 示例
-## 算法
-> An awesome project.
+# QinZhuo Coding
+> 我会在这里分享一些游戏开发方向的知识
 ## Shader
