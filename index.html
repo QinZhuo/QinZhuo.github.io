@@ -7,7 +7,8 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <!-- 主题 -->
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css">
+  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css"> -->
+  <link rel="stylesheet" href="themes/dark-react.css">
 </head>
 <body>
   <div id="app"></div> 
@@ -16,12 +17,11 @@
       name: '<b>琴卓</b>',
       nameLink: 'https://space.bilibili.com/3981300',
       repo: 'https://github.com/QinZhuo',
+      subMaxLevel: 2,
+      homepage: 'README.md',
       loadNavbar:"navbar.md", 
-      loadSidebar:"sidebar.md", 
-      subMaxLevel: 2,  
-      basePath: '/md/',
-      homepage: 'home.md',
-      relativePath: true,
+      loadSidebar:"sidebar.md",
+      //relativePath: true,
       executeScript: true,
       noEmoji: true,
       auto2top: true,
@@ -42,7 +42,7 @@
         crossChapterText: true,
       },
       //页脚
-      loadFooter: 'md/footer.md',
+      loadFooter: 'footer.md',
     }
   </script>
   <!-- Docsify v4 -->
