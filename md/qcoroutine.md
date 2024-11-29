@@ -2,7 +2,7 @@
 
 自己实现的协程逻辑 不依赖于Unity 可以手动更新
 > 最开始是为帧同步实现的调用顺序可控的协程 虽然挺易用的 但后来还是被我从库中删除了 因为协程遍历的GC无法避免
-
+```csharp
     public static class QCoroutine {
 		private static QDelayList<IEnumerator> List { set; get; } = new QDelayList<IEnumerator>();
 		public static bool IsRunning(this IEnumerator enumerator) {
@@ -162,3 +162,4 @@
 			Queue.Clear();
 		}
 	}
+```

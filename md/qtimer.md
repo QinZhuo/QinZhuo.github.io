@@ -2,7 +2,7 @@
 
 可循环使用的计时器实现
 > 手动调用更新 会保留上次调用余下的时间间隔
-
+```csharp
    [Serializable]
 	public class QTimer
 	{
@@ -68,3 +68,4 @@
 		}
 
 	}
+```

@@ -1,7 +1,7 @@
 # 动态列表
 
 基于[对象池](qobjectpool)实现的动态列表 可用于UI和游戏对象
-
+```csharp
     public class QObjectList : MonoBehaviour {
 		[QName("预制体")]
 		public GameObject prefab;
@@ -77,3 +77,4 @@
 		public event System.Action<GameObject> OnCreate;
 		public event System.Action<GameObject> OnRelease;
 	}
+```
