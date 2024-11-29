@@ -306,3 +306,5 @@ AverageBlur
 https://blog.csdn.net/puppet_master/article/details/52547442  
  
 https://blog.csdn.net/poem_qianmo/article/details/51871531
+
+![测试图像](../img/ScreenEffect.png)
