@@ -6,69 +6,94 @@
 
 对于上千上万个可滚动UI拥有极大的优化效果
 ```csharp
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+namespace QTool {
 	[RequireComponent(typeof(QObjectList))]
 	public class QVirtualList : MonoBehaviour {
 		public QObjectList list;
 		public ScrollRect scrollRect;
 		public LayoutGroup layoutGroup;
-		public float ViewportUp{ get; private set; }
-		public float ViewportDown { get;private set; }
 		private void Reset() {
 			list = GetComponent<QObjectList>();
 			scrollRect = GetComponentInParent<ScrollRect>();
 			layoutGroup = GetComponentInParent<LayoutGroup>();
 		}
-		private void UpdateViewportSize() {
-			ViewportUp = scrollRect.viewport.Up();
-			ViewportDown = scrollRect.viewport.Down();
-		}
 		public int VirtualCount { get; private set; }
 		private event Action<int> GetVirtual;
+		private bool dirty = false;
 		public void SetVirtualData(int VirtualCount, Action<int> GetVirtual) {
 			list.DelayClear();
 			this.VirtualCount = VirtualCount;
 			this.GetVirtual = GetVirtual;
-			Fresh();
-		}
-		public void Fresh() {
-			list.DelayClear();
-			if(layoutGroup is VerticalLayoutGroup vertical) {
-				vertical.padding.top = 0;
-				vertical.padding.bottom = 0;
-				for (int i = 0; i < VirtualCount; i++) {
-					Debug.LogError($"{i} {!(GetDown(i) > scrollRect.viewport.Up()|| GetUp(i) < scrollRect.viewport.Down())} \n {GetDown(i) > scrollRect.viewport.Up()} {GetUp(i) < scrollRect.viewport.Down()} {scrollRect.viewport.up} " +
-						$" \n {GetDown(i)} > {ViewportUp}"+
-						$"\n {GetUp(i)} < {ViewportDown}"  );
-
-					if (GetDown(i) > ViewportUp) {
-						vertical.padding.top += (int)(list.prefab.transform as RectTransform).Height();
-					}
-					else if (GetUp(i) < ViewportDown) {
-
-						vertical.padding.bottom -= (int)(list.prefab.transform as RectTransform).Height();
-					}
-					else {
-						GetVirtual(i);
-					}
-				}
-			}
-		}
-		public float GetDown(int index) {
-			var rect = list.prefab.transform as RectTransform;
-			return rect.Down() - index * rect.Height();
-		}
-		public float GetUp(int index) {
-			var rect = list.prefab.transform as RectTransform;
-			return rect.Up() - index * rect.Height();
+			dirty = true;
 		}
 		private void Start() {
 			scrollRect.onValueChanged.AddListener(v2 => {
-				Fresh();
+				dirty = true;
 			});
 		}
-		private void Update() {
-			UpdateViewportSize();
+		private void LateUpdate() {
+			if (dirty && scrollRect.viewport.Width() > 0) {
+				dirty = false;
+				Fresh();
+			}
+		}
+		public void Fresh() {
+			list.DelayClear();
+			switch (layoutGroup) {
+				case VerticalLayoutGroup vertical: {
+					vertical.padding.top = 0;
+					vertical.padding.bottom = 0;
+					var viewportStart = scrollRect.viewport.Up();
+					var viewportEnd = scrollRect.viewport.Down();
+					var layoutStart = (layoutGroup.transform as RectTransform).Up();
+					var prefabSize = (int)(list.prefab.transform as RectTransform).Height();
+					for (int i = 0; i < VirtualCount; i++) {
+						var start = layoutStart - i * prefabSize;
+						var end = layoutStart - (i + 1) * prefabSize;
+						if (end > viewportStart) {
+							vertical.padding.top += prefabSize;
+						}
+						else if (start < viewportEnd) {
+
+							vertical.padding.bottom += prefabSize;
+						}
+						else {
+							GetVirtual(i);
+						}
+					}
+				}
+				break;
+				case HorizontalLayoutGroup horizontal: {
+					horizontal.padding.left = 0;
+					horizontal.padding.right = 0;
+					var viewportStart = scrollRect.viewport.Left();
+					var viewportEnd = scrollRect.viewport.Right();
+					var layoutStart = (layoutGroup.transform as RectTransform).Left();
+					var prefabSize = (int)(list.prefab.transform as RectTransform).Width();
+					for (int i = 0; i < VirtualCount; i++) {
+						var start = layoutStart + i * prefabSize;
+						var end = layoutStart + (i + 1) * prefabSize;
+						if (end < viewportStart) {
+							horizontal.padding.left += prefabSize;
+						}
+						else if (start > viewportEnd) {
+
+							horizontal.padding.right += prefabSize;
+						}
+						else {
+							GetVirtual(i);
+						}
+					}
+				}
+				break;
+				default:
+					break;
+			}
 		}
 	}
+}
 ```
 
