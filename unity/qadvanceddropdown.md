@@ -6,29 +6,33 @@
 public class QAdvancedDropdown : AdvancedDropdown {
 	public AdvancedDropdownItem Root { get; private set; }
 	public QDictionary<string,AdvancedDropdownItem> Items { get; private set; }
-	private event Action<string> onItemSelected;
-	public QAdvancedDropdown(string title, Action<string> onItemSelected) : base(new AdvancedDropdownState()) {
+	public QDictionary<AdvancedDropdownItem, Action> Actions { get; private set; } = new();
+	public QAdvancedDropdown(string title, Action<string> onItemSelected = null) : base(new AdvancedDropdownState()) {
 		Root = new AdvancedDropdownItem(title);
 		Items = new(key => {
 			if (key.SplitTowString("/", out var start, out var end)) {
 				var item = new AdvancedDropdownItem(key);
 				Items[start].AddChild(item);
+				if (onItemSelected != null) {
+					Actions[item] = () => onItemSelected(key);
+				}
 				return item;
 			}
 			else {
 				var item = new AdvancedDropdownItem(key);
 				Root.AddChild(item);
+				if (onItemSelected != null) {
+					Actions[item] = () => onItemSelected(key);
+				}
 				return item;
 			}
 		});
-		this.onItemSelected = onItemSelected;
+
 	}
-	public void Add(string key) {
-		_ = Items[key];
-	}
-	public void Add(params string[] keys) {
-		foreach (var key in keys) {
-			Add(key);
+	public void Add(string key,Action action=null) {
+		var item = Items[key];
+		if (action != null) {
+			Actions[item] = action;
 		}
 	}
 	public void Add(IList<string> keys) {
@@ -41,7 +45,7 @@ public class QAdvancedDropdown : AdvancedDropdown {
 	}
 	protected override void ItemSelected(AdvancedDropdownItem item) {
 		base.ItemSelected(item);
-		onItemSelected?.Invoke(item.name);
+		Actions[item]?.Invoke();
 	}
 }
 ```
