@@ -2,9 +2,8 @@
 
 对[动态列表](qobjectlist)的功能动态拓展 用于对于UI列表的性能优化 只有在显示范围内的UI才会创建赋值
 
-![alt text](image.png)
-
 对于上千上万个可滚动UI拥有极大的优化效果
+
 ```csharp
 using System;
 using UnityEngine;
