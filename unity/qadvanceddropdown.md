@@ -1,17 +1,21 @@
 # 可搜索下拉框
 基于AdvancedDropdown制作的可搜索下拉框
 
-![可搜索下拉框](img/qdropdown.png)
+![可搜索下拉框](qdropdown.png)
 ```csharp
 public class QAdvancedDropdown : AdvancedDropdown {
 	public AdvancedDropdownItem Root { get; private set; }
 	public QDictionary<string,AdvancedDropdownItem> Items { get; private set; }
 	public QDictionary<AdvancedDropdownItem, Action> Actions { get; private set; } = new();
+	public IMouseEvent MouseEvent { get; set; }
 	public QAdvancedDropdown(string title, Action<string> onItemSelected = null) : base(new AdvancedDropdownState()) {
 		Root = new AdvancedDropdownItem(title);
 		Items = new(key => {
-			if (key.SplitTowString("/", out var start, out var end)) {
-				var item = new AdvancedDropdownItem(key);
+			if (key.Contains('/')) {
+				var index = key.LastIndexOf('/');
+				var start = key.Substring(0, index);
+				var end = key.Substring(index+1);
+				var item = new AdvancedDropdownItem(end);
 				Items[start].AddChild(item);
 				if (onItemSelected != null) {
 					Actions[item] = () => onItemSelected(key);
@@ -28,6 +32,9 @@ public class QAdvancedDropdown : AdvancedDropdown {
 			}
 		});
 
+	}
+	public void AddSeparator() {
+		Root.AddSeparator();
 	}
 	public void Add(string key,Action action=null) {
 		var item = Items[key];
